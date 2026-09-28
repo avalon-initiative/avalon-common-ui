@@ -34,6 +34,9 @@ export { default as AvalonIntegratorCard } from './components/AvalonIntegratorCa
 export { default as AvalonMetricTile } from './components/AvalonMetricTile.vue'
 export { default as AvalonAchievementCard } from './components/AvalonAchievementCard.vue'
 export { default as AvalonColorPicker } from './components/AvalonColorPicker.vue'
+export { default as AvalonStatusBadge } from './components/AvalonStatusBadge.vue'
+export { default as AvalonLegend } from './components/AvalonLegend.vue'
+export { default as AvalonDetailList } from './components/AvalonDetailList.vue'
 export type { AvalonBadgeIconProps, AvalonBadgeTier } from './types/AvalonBadgeIcon.types'
 export type { AvalonIconName } from './types/AvalonIcon.types'
 export type { AvalonNavItem } from './types/AvalonNav.types'
@@ -56,3 +59,11 @@ export type {
   AvalonAchievementCardProps,
   AvalonAchievementHistoryEntry,
 } from './types/AvalonAchievementCard.types'
+export type { AvalonStatusBadgeProps, AvalonStatusTone } from './types/AvalonStatusBadge.types'
+export type {
+  AvalonLegendItem,
+  AvalonLegendProps,
+  AvalonLegendShape,
+  AvalonLegendTone,
+} from './types/AvalonLegend.types'
+export type { AvalonDetailListItem, AvalonDetailListProps } from './types/AvalonDetailList.types'

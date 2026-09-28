@@ -16,6 +16,7 @@ import {
   AvalonColorPicker,
   AvalonConnectionCard,
   AvalonDateTimeField,
+  AvalonDetailList,
   AvalonEventCard,
   AvalonFilterBar,
   AvalonForm,
@@ -25,6 +26,7 @@ import {
   AvalonGuildCard,
   AvalonGuildMemberRow,
   AvalonIcon,
+  AvalonLegend,
   AvalonMetricTile,
   AvalonModal,
   AvalonPresenceBadge,
@@ -32,6 +34,7 @@ import {
   AvalonRsvpControl,
   AvalonRsvpRosterPanel,
   AvalonSidebarNav,
+  AvalonStatusBadge,
   AvalonSuggestionRow,
   AvalonUserChip,
   AvalonWarningBanner,
@@ -955,5 +958,68 @@ describe('AvalonColorPicker', () => {
     })
     const swatch = wrapper.find('input[type="color"]')
     expect((swatch.element as HTMLInputElement).value).toBe('#888888')
+  })
+})
+
+describe('AvalonStatusBadge', () => {
+  it('renders the label', () => {
+    const wrapper = mount(AvalonStatusBadge, { props: { label: 'Stale' } })
+    expect(wrapper.text()).toContain('Stale')
+  })
+
+  it('defaults to the neutral tone', () => {
+    const wrapper = mount(AvalonStatusBadge, { props: { label: 'Synced' } })
+    expect(wrapper.find('span > span').classes().join(' ')).toMatch(/neutral/)
+  })
+
+  it('applies the given tone', () => {
+    const wrapper = mount(AvalonStatusBadge, { props: { label: 'Unreachable', tone: 'danger' } })
+    expect(wrapper.find('span > span').classes().join(' ')).toMatch(/danger/)
+  })
+})
+
+describe('AvalonLegend', () => {
+  const items = [
+    { label: 'Active', shape: 'solid', tone: 'primary' },
+    { label: 'Known only' },
+  ] as const
+
+  it('renders one entry per item, and the title when given', () => {
+    const wrapper = mount(AvalonLegend, { props: { title: 'Links', items: [...items] } })
+    expect(wrapper.text()).toContain('Links')
+    expect(wrapper.findAll('li')).toHaveLength(2)
+  })
+
+  it('omits the title when none is given', () => {
+    const wrapper = mount(AvalonLegend, { props: { items: [...items] } })
+    expect(wrapper.find('h3').exists()).toBe(false)
+  })
+
+  it('draws a line for line shapes and a dot by default', () => {
+    const wrapper = mount(AvalonLegend, { props: { items: [...items] } })
+    const swatches = wrapper.findAll('li > span')
+    expect(swatches[0].classes().join(' ')).toMatch(/solid/)
+    expect(swatches[1].classes().join(' ')).toMatch(/dot/)
+  })
+})
+
+describe('AvalonDetailList', () => {
+  const items = [
+    { label: 'URL', value: 'http://node:8080', mono: true },
+    { label: 'Role', value: 'Hoster' },
+  ]
+
+  it('renders each label with its value', () => {
+    const wrapper = mount(AvalonDetailList, { props: { title: 'Node', items } })
+    expect(wrapper.text()).toContain('Node')
+    expect(wrapper.findAll('dt').map((d) => d.text())).toEqual(['URL', 'Role'])
+    expect(wrapper.findAll('dd').map((d) => d.text())).toEqual(['http://node:8080', 'Hoster'])
+  })
+
+  it('uses the mono style only for items that ask for it', () => {
+    const wrapper = mount(AvalonDetailList, { props: { items } })
+    const values = wrapper.findAll('dd')
+    expect(values[0].classes().join(' ')).toMatch(/mono/)
+    expect(values[1].classes().join(' ')).not.toMatch(/mono/)
   })
 })
