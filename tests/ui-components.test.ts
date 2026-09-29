@@ -41,6 +41,7 @@ import {
   AvalonStatusBadge,
   AvalonSuggestionRow,
   AvalonToggleSwitch,
+  AvalonTabs,
   AvalonUserChip,
   AvalonWarningBanner,
 } from '../src'
@@ -1174,5 +1175,21 @@ describe('AvalonDrawer', () => {
 
   it('renders nothing when closed', () => {
     expect(mount(AvalonDrawer, { props: { open: false, title: 'Details' } }).find('aside').exists()).toBe(false)
+  })
+})
+
+describe('AvalonTabs', () => {
+  it('renders a tablist with a tab and a panel per tab', () => {
+    const wrapper = mount(AvalonTabs, {
+      props: {
+        tabs: [{ id: 'a', label: 'A', badge: '2' }, { id: 'b', label: 'B' }],
+        modelValue: 'a',
+        label: 'Tools',
+      },
+      slots: { a: 'first', b: 'second' },
+    })
+    expect(wrapper.get('[role=tablist]').attributes('aria-label')).toBe('Tools')
+    expect(wrapper.findAll('[role=tab]').map((t) => t.text())).toEqual(['A2', 'B'])
+    expect(wrapper.findAll('[role=tabpanel]')).toHaveLength(2)
   })
 })

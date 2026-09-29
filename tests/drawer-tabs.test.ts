@@ -1,7 +1,8 @@
 // Behavior of AvalonDrawer (Escape, focus, reduced motion) and AvalonTabs (keyboard, panels, ids).
 import { mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it } from 'vitest'
-import { AvalonDrawer } from '../src'
+import { AvalonDrawer, AvalonTabs } from '../src'
+import { tabAfterKey } from '../src/state/AvalonTabs.state'
 
 afterEach(() => {
   document.body.innerHTML = ''
@@ -91,3 +92,112 @@ describe('AvalonDrawer behavior', () => {
   })
 })
 
+describe('tabAfterKey', () => {
+  const tabs = [{ id: 'a' }, { id: 'b', disabled: true }, { id: 'c' }, { id: 'd' }]
+
+  it('arrows wrap and skip disabled tabs', () => {
+    expect(tabAfterKey(tabs, 'a', 'ArrowRight')).toBe('c')
+    expect(tabAfterKey(tabs, 'd', 'ArrowRight')).toBe('a')
+    expect(tabAfterKey(tabs, 'c', 'ArrowLeft')).toBe('a')
+    expect(tabAfterKey(tabs, 'a', 'ArrowLeft')).toBe('d')
+  })
+
+  it('Home and End jump to the first and last enabled tab', () => {
+    expect(tabAfterKey([{ id: 'x', disabled: true }, ...tabs], 'c', 'Home')).toBe('a')
+    expect(tabAfterKey([...tabs, { id: 'z', disabled: true }], 'a', 'End')).toBe('d')
+  })
+
+  it('ignores other keys and unknown current ids', () => {
+    expect(tabAfterKey(tabs, 'a', 'Enter')).toBeUndefined()
+    expect(tabAfterKey(tabs, 'nope', 'ArrowRight')).toBeUndefined()
+  })
+})
+
+const tabs = [
+  { id: 'a', label: 'A' },
+  { id: 'b', label: 'B', disabled: true },
+  { id: 'c', label: 'C', badge: '4' },
+]
+
+function mountTabs(props: Record<string, unknown> = {}) {
+  return mount(AvalonTabs, {
+    props: {
+      tabs,
+      modelValue: 'a',
+      'onUpdate:modelValue': (v: string) => wrapperRef.setProps({ modelValue: v }),
+      ...props,
+    },
+    slots: { a: '<input class="keep" />', b: 'B panel', c: 'C panel' },
+    attachTo: document.body,
+  })
+}
+let wrapperRef: ReturnType<typeof mountTabs>
+
+describe('AvalonTabs behavior', () => {
+  it('roving tabindex and aria-selected follow the active tab', () => {
+    wrapperRef = mountTabs()
+    const tabEls = wrapperRef.findAll('[role=tab]')
+    expect(tabEls.map((t) => t.attributes('aria-selected'))).toEqual(['true', 'false', 'false'])
+    expect(tabEls.map((t) => t.attributes('tabindex'))).toEqual(['0', '-1', '-1'])
+  })
+
+  it('tabs link to their panels both ways', () => {
+    wrapperRef = mountTabs()
+    const tab = wrapperRef.get('[role=tab]')
+    const panel = wrapperRef.get('[role=tabpanel]')
+    expect(tab.attributes('aria-controls')).toBe(panel.attributes('id'))
+    expect(panel.attributes('aria-labelledby')).toBe(tab.attributes('id'))
+  })
+
+  it('clicking a tab emits update:modelValue; a disabled tab is not clickable', async () => {
+    wrapperRef = mountTabs()
+    await wrapperRef.findAll('[role=tab]')[2].trigger('click')
+    expect(wrapperRef.emitted('update:modelValue')).toEqual([['c']])
+    await wrapperRef.findAll('[role=tab]')[1].trigger('click')
+    expect(wrapperRef.emitted('update:modelValue')).toHaveLength(1)
+  })
+
+  it('arrow keys move the selection past disabled tabs and focus the new tab', async () => {
+    wrapperRef = mountTabs()
+    await wrapperRef.get('[role=tablist]').trigger('keydown', { key: 'ArrowRight' })
+    await wrapperRef.vm.$nextTick()
+    expect(wrapperRef.emitted('update:modelValue')?.[0]).toEqual(['c'])
+    expect(document.activeElement).toBe(wrapperRef.findAll('[role=tab]')[2].element)
+    await wrapperRef.get('[role=tablist]').trigger('keydown', { key: 'Home' })
+    expect(wrapperRef.emitted('update:modelValue')?.[1]).toEqual(['a'])
+  })
+
+  it('shows the badge as text', () => {
+    wrapperRef = mountTabs()
+    expect(wrapperRef.findAll('[role=tab]')[2].text()).toBe('C4')
+  })
+
+  it('keeps inactive panels mounted but hidden by default', async () => {
+    wrapperRef = mountTabs()
+    const panels = wrapperRef.findAll('[role=tabpanel]')
+    expect(panels).toHaveLength(3)
+    expect(panels.map((p) => p.isVisible())).toEqual([true, false, false])
+    expect(wrapperRef.find('input.keep').exists()).toBe(true)
+    await wrapperRef.setProps({ modelValue: 'c' })
+    expect(wrapperRef.find('input.keep').exists()).toBe(true)
+    expect(wrapperRef.findAll('[role=tabpanel]').map((p) => p.isVisible())).toEqual([false, false, true])
+  })
+
+  it('keepAlive=false renders only the active panel', async () => {
+    wrapperRef = mountTabs({ keepAlive: false })
+    expect(wrapperRef.findAll('[role=tabpanel]')).toHaveLength(1)
+    expect(wrapperRef.find('input.keep').exists()).toBe(true)
+    await wrapperRef.setProps({ modelValue: 'c' })
+    expect(wrapperRef.findAll('[role=tabpanel]')).toHaveLength(1)
+    expect(wrapperRef.find('input.keep').exists()).toBe(false)
+    expect(wrapperRef.text()).toContain('C panel')
+  })
+
+  it('two instances never share ids', () => {
+    const one = mountTabs()
+    const two = mountTabs()
+    const ids = [...one.findAll('[id]'), ...two.findAll('[id]')].map((e) => e.attributes('id'))
+    expect(ids).toHaveLength(12)
+    expect(new Set(ids).size).toBe(12)
+  })
+})
