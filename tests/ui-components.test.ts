@@ -38,6 +38,7 @@ import {
   AvalonRsvpControl,
   AvalonRsvpRosterPanel,
   AvalonSidebarNav,
+  AvalonIssueList,
   AvalonStatusBadge,
   AvalonTimelineStrip,
   AvalonSuggestionRow,
@@ -1203,5 +1204,16 @@ describe('AvalonTimelineStrip', () => {
     expect(wrapper.findAll('li button')).toHaveLength(2)
     expect(wrapper.text()).toContain('first')
     expect(wrapper.text()).toContain('latest')
+  })
+})
+
+describe('AvalonIssueList', () => {
+  it('renders the heading, badge and primary text', () => {
+    const wrapper = mount(AvalonIssueList, {
+      props: { title: 'Alerts', items: [{ id: 'a', badge: 'Stale', tone: 'warning', primary: 'node-a' }] },
+    })
+    expect(wrapper.text()).toContain('Alerts (1)')
+    expect(wrapper.text()).toContain('Stale')
+    expect(wrapper.text()).toContain('node-a')
   })
 })

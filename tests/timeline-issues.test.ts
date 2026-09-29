@@ -1,7 +1,7 @@
 // AvalonTimelineStrip and AvalonIssueList: selection, defaults and conditional parts.
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { AvalonTimelineStrip } from '../src'
+import { AvalonIssueList, AvalonTimelineStrip } from '../src'
 
 const snaps = [
   { id: 'a', subtitle: '10:00', note: 'first' },
@@ -58,5 +58,60 @@ describe('AvalonTimelineStrip', () => {
   it('renders an empty list without buttons', () => {
     const wrapper = mount(AvalonTimelineStrip, { props: { items: [] } })
     expect(wrapper.findAll('button')).toHaveLength(0)
+  })
+})
+
+const issues = [
+  { id: 'a', badge: 'Equivocation', tone: 'danger' as const, primary: 'node-a', secondary: 'conflict', title: 'tip a' },
+  { id: 'b', badge: 'Stale', tone: 'warning' as const, primary: 'node-b' },
+]
+
+describe('AvalonIssueList', () => {
+  it('shows the title with the item count', () => {
+    const wrapper = mount(AvalonIssueList, { props: { title: 'Alerts', items: issues } })
+    expect(wrapper.get('h3').text()).toBe('Alerts (2)')
+  })
+
+  it('omits the heading without a title and names the section by label', () => {
+    const wrapper = mount(AvalonIssueList, { props: { items: issues, label: 'Alerts' } })
+    expect(wrapper.find('h3').exists()).toBe(false)
+    expect(wrapper.get('section').attributes('aria-label')).toBe('Alerts')
+  })
+
+  it('is not selectable by default: no buttons', () => {
+    const wrapper = mount(AvalonIssueList, { props: { items: issues } })
+    expect(wrapper.findAll('button')).toHaveLength(0)
+    expect(wrapper.text()).toContain('node-a')
+  })
+
+  it('emits select with the id when selectable', async () => {
+    const wrapper = mount(AvalonIssueList, { props: { items: issues, selectable: true } })
+    const buttons = wrapper.findAll('button')
+    expect(buttons).toHaveLength(2)
+    await buttons[1].trigger('click')
+    expect(wrapper.emitted('select')).toEqual([['b']])
+  })
+
+  it('renders nothing when empty', () => {
+    const wrapper = mount(AvalonIssueList, { props: { title: 'Alerts', items: [] } })
+    expect(wrapper.find('section').exists()).toBe(false)
+    expect(wrapper.text()).toBe('')
+  })
+
+  it('renders the badge as text with a tone class', () => {
+    const wrapper = mount(AvalonIssueList, { props: { items: issues } })
+    const badges = wrapper.findAll('li > span:first-child')
+    expect(badges.map((b) => b.text())).toEqual(['Equivocation', 'Stale'])
+    expect(badges[0].classes().join(' ')).toMatch(/danger/)
+    expect(badges[1].classes().join(' ')).toMatch(/warning/)
+  })
+
+  it('shows the secondary text only when given, and the tooltip', () => {
+    const wrapper = mount(AvalonIssueList, { props: { items: issues } })
+    expect(wrapper.text()).toContain('conflict')
+    const rows = wrapper.findAll('li')
+    expect(rows[0].attributes('title')).toBe('tip a')
+    expect(rows[1].attributes('title')).toBeUndefined()
+    expect(rows[1].findAll('span')).toHaveLength(2)
   })
 })
