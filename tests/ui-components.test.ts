@@ -1075,6 +1075,9 @@ describe('AvalonChip', () => {
     const wrapper = mount(AvalonChip, { props: { label: 'validator' } })
     expect(wrapper.text()).toContain('validator')
     expect(wrapper.find('button').exists()).toBe(true)
+  })
+})
+
 describe('AvalonDetailList block rows', () => {
   const items = [
     { label: 'Role', value: 'Hoster' },
