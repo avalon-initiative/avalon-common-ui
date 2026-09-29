@@ -39,6 +39,7 @@ export { default as AvalonColorPicker } from './components/AvalonColorPicker.vue
 export { default as AvalonStatusBadge } from './components/AvalonStatusBadge.vue'
 export { default as AvalonLegend } from './components/AvalonLegend.vue'
 export { default as AvalonDetailList } from './components/AvalonDetailList.vue'
+export { default as AvalonDrawer } from './components/AvalonDrawer.vue'
 export type { AvalonBadgeIconProps, AvalonBadgeTier } from './types/AvalonBadgeIcon.types'
 export type { AvalonIconName } from './types/AvalonIcon.types'
 export type { AvalonNavItem } from './types/AvalonNav.types'
@@ -77,3 +78,4 @@ export type {
 export type { AvalonChipProps } from './types/AvalonChip.types'
 export type { AvalonToggleSwitchProps } from './types/AvalonToggleSwitch.types'
 export { default as AvalonToggleSwitch } from './components/AvalonToggleSwitch.vue'
+export type { AvalonDrawerProps } from './types/AvalonDrawer.types'
