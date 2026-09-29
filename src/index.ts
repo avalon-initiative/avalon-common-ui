@@ -19,6 +19,8 @@ export { default as AvalonUserChip } from './components/AvalonUserChip.vue'
 export { default as AvalonEditableField } from './components/AvalonEditableField.vue'
 export { default as AvalonGuildCard } from './components/AvalonGuildCard.vue'
 export { default as AvalonGuildMemberRow } from './components/AvalonGuildMemberRow.vue'
+export { default as AvalonMultiSelect } from './components/AvalonMultiSelect.vue'
+export { default as AvalonChip } from './components/AvalonChip.vue'
 export { default as AvalonRoleBadge } from './components/AvalonRoleBadge.vue'
 export { default as AvalonChannelList } from './components/AvalonChannelList.vue'
 export { default as AvalonChatMessage } from './components/AvalonChatMessage.vue'
@@ -67,3 +69,8 @@ export type {
   AvalonLegendTone,
 } from './types/AvalonLegend.types'
 export type { AvalonDetailListItem, AvalonDetailListProps } from './types/AvalonDetailList.types'
+export type {
+  AvalonMultiSelectOption,
+  AvalonMultiSelectProps,
+} from './types/AvalonMultiSelect.types'
+export type { AvalonChipProps } from './types/AvalonChip.types'

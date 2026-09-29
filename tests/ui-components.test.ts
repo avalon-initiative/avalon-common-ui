@@ -10,6 +10,7 @@ import {
   AvalonCalendarMonth,
   AvalonCapabilityConsentRow,
   AvalonCard,
+  AvalonChip,
   AvalonChannelList,
   AvalonChatComposer,
   AvalonChatMessage,
@@ -29,6 +30,7 @@ import {
   AvalonLegend,
   AvalonMetricTile,
   AvalonModal,
+  AvalonMultiSelect,
   AvalonPresenceBadge,
   AvalonRoleBadge,
   AvalonRsvpControl,
@@ -42,7 +44,7 @@ import {
 
 const ALL_ICON_NAMES: AvalonIconName[] = [
   'home', 'integrators', 'guilds', 'friends', 'chat', 'discover', 'profile', 'search',
-  'bell', 'plus', 'device', 'activity', 'logo', 'alert', 'pencil', 'check', 'close',
+  'bell', 'plus', 'device', 'activity', 'logo', 'alert', 'pencil', 'check', 'close', 'chevron-down',
   'settings', 'voice', 'video', 'messages', 'calendar', 'achievements', 'library',
   'wallet', 'more', 'community', 'faction', 'event', 'reward', 'leaderboards', 'map',
   'join', 'leave', 'invite', 'share', 'bookmark', 'follow', 'muted', 'block',
@@ -1021,5 +1023,24 @@ describe('AvalonDetailList', () => {
     const values = wrapper.findAll('dd')
     expect(values[0].classes().join(' ')).toMatch(/mono/)
     expect(values[1].classes().join(' ')).not.toMatch(/mono/)
+  })
+})
+
+describe('AvalonMultiSelect', () => {
+  it('renders the trigger with its label and a closed popover', () => {
+    const wrapper = mount(AvalonMultiSelect, {
+      props: { label: 'Role', options: [{ value: 'a', label: 'Alpha' }], modelValue: [] },
+    })
+    expect(wrapper.get('button').text()).toBe('Role')
+    expect(wrapper.get('button').attributes('aria-expanded')).toBe('false')
+    expect(wrapper.find('[role="group"]').isVisible()).toBe(false)
+  })
+})
+
+describe('AvalonChip', () => {
+  it('renders its label and a remove button', () => {
+    const wrapper = mount(AvalonChip, { props: { label: 'validator' } })
+    expect(wrapper.text()).toContain('validator')
+    expect(wrapper.find('button').exists()).toBe(true)
   })
 })
