@@ -20,8 +20,42 @@ export function toggleValue(selected: string[], value: string): string[] {
   return selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]
 }
 
+const VIEWPORT_GUTTER = 16
+
 export function clear(): string[] {
   return []
+}
+
+export type AvalonMultiSelectAlign = 'start' | 'end' | 'auto'
+
+export interface RectEdges {
+  left: number
+  right: number
+}
+
+/** Start-aligned when it fits; otherwise end-aligned if the trigger sits nearer the right edge (clampShift then handles a popover too wide for either). */
+export function alignFor(
+  trigger: RectEdges,
+  popoverWidth: number,
+  viewportWidth: number,
+  gutter: number,
+): 'start' | 'end' {
+  if (trigger.left + popoverWidth <= viewportWidth - gutter) return 'start'
+  return trigger.left + trigger.right >= viewportWidth ? 'end' : 'start'
+}
+
+/** Horizontal px shift that keeps an aligned popover inside the viewport gutters. */
+export function clampShift(
+  trigger: RectEdges,
+  popoverWidth: number,
+  align: 'start' | 'end',
+  viewportWidth: number,
+  gutter: number,
+): number {
+  const left = align === 'start' ? trigger.left : trigger.right - popoverWidth
+  const maxLeft = viewportWidth - gutter - popoverWidth
+  const clamped = Math.max(gutter, Math.min(left, maxLeft))
+  return Math.round(clamped - left)
 }
 
 export interface MultiSelectEmit {
@@ -32,6 +66,7 @@ export function useMultiSelect(
   getOptions: () => AvalonMultiSelectOption[],
   getSelected: () => string[],
   getSearchable: () => boolean,
+  getAlign: () => AvalonMultiSelectAlign,
   emit: MultiSelectEmit,
 ) {
   const open = ref(false)
@@ -40,6 +75,23 @@ export function useMultiSelect(
   const trigger = ref<HTMLButtonElement | null>(null)
   const search = ref<HTMLInputElement | null>(null)
   const list = ref<HTMLElement | null>(null)
+
+  const resolvedAlign = ref<'start' | 'end'>('start')
+  const shift = ref(0)
+  const popover = ref<HTMLElement | null>(null)
+
+  // Measured after the popover is displayed; runs before paint so there is no flash.
+  function place() {
+    const t = trigger.value
+    const p = popover.value
+    if (!t || !p) return
+    const rect = t.getBoundingClientRect()
+    const width = p.offsetWidth
+    const viewport = document.documentElement.clientWidth
+    const forced = getAlign()
+    resolvedAlign.value = forced === 'auto' ? alignFor(rect, width, viewport, VIEWPORT_GUTTER) : forced
+    shift.value = clampShift(rect, width, resolvedAlign.value, viewport, VIEWPORT_GUTTER)
+  }
 
   const visible = computed(() => filterOptions(getOptions(), query.value))
   const count = computed(() => getSelected().length)
@@ -51,6 +103,7 @@ export function useMultiSelect(
   async function openPopover() {
     open.value = true
     await nextTick()
+    place()
     if (getSearchable()) search.value?.focus()
     else checkboxes()[0]?.focus()
   }
@@ -116,6 +169,9 @@ export function useMultiSelect(
     trigger,
     search,
     list,
+    popover,
+    resolvedAlign,
+    shift,
     visible,
     count,
     toggleOpen,

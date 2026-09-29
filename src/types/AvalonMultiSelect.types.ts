@@ -21,4 +21,6 @@ export interface AvalonMultiSelectProps {
   emptyText?: string
   /** Text of the button that unticks everything. */
   clearLabel?: string
+  /** Popover edge aligned to the trigger; 'auto' (default) picks whichever keeps it on screen. */
+  align?: 'start' | 'end' | 'auto'
 }

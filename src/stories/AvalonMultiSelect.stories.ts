@@ -71,3 +71,12 @@ export const LongLabels: Story = {
 }
 
 export const NoSearch: Story = { args: { searchable: false } }
+
+const atRight = () => ({
+  template: '<div style="display: flex; justify-content: flex-end; padding-right: 1rem"><story /></div>',
+})
+
+// Trigger at the far right: 'auto' flips the popover to the trigger's end edge.
+export const RightEdgeAuto: Story = { decorators: [atRight] }
+
+export const ForcedEnd: Story = { args: { align: 'end' } }

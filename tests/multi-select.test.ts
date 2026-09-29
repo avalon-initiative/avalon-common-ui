@@ -2,7 +2,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
 import { AvalonChip, AvalonMultiSelect } from '../src'
-import { clear, filterOptions, toggleValue } from '../src/state/AvalonMultiSelect.state'
+import { alignFor, clampShift, clear, filterOptions, toggleValue } from '../src/state/AvalonMultiSelect.state'
 
 const options = [
   { value: 'role-admin', label: 'Admin', description: 'Full access' },
@@ -39,7 +39,41 @@ describe('AvalonMultiSelect state helpers', () => {
   })
 })
 
+describe('AvalonMultiSelect alignment helpers', () => {
+  const g = 16
+
+  it('alignFor picks start when the popover fits to the right of the trigger start', () => {
+    expect(alignFor({ left: 20, right: 100 }, 320, 1000, g)).toBe('start')
+  })
+
+  it('alignFor picks end when start would overflow but end fits', () => {
+    expect(alignFor({ left: 800, right: 900 }, 320, 1000, g)).toBe('end')
+  })
+
+  it('alignFor still answers when the popover is too wide for either side', () => {
+    expect(alignFor({ left: 250, right: 300 }, 358, 390, g)).toBe('end')
+    expect(alignFor({ left: 30, right: 80 }, 358, 390, g)).toBe('start')
+  })
+
+  it('clampShift is zero when aligned and inside, and pulls a too-wide popover inside the gutters', () => {
+    expect(clampShift({ left: 20, right: 100 }, 320, 'start', 1000, g)).toBe(0)
+    expect(clampShift({ left: 250, right: 300 }, 358, 'end', 390, g)).toBe(16 - (300 - 358))
+    expect(clampShift({ left: 250, right: 300 }, 358, 'start', 390, g)).toBe(16 - 250)
+  })
+})
+
 describe('AvalonMultiSelect', () => {
+  it.each([
+    ['end', true],
+    ['start', false],
+  ] as const)('align=%s forces the end-aligned class %s', async (align, expectEnd) => {
+    const wrapper = mountSelect({ align })
+    await wrapper.get('button').trigger('click')
+    const popover = wrapper.get('[role="group"]').element.parentElement!
+    expect(/alignEnd/.test(popover.className)).toBe(expectEnd)
+    wrapper.unmount()
+  })
+
   it('opens and closes from the trigger, wiring aria to the popover', async () => {
     const wrapper = mountSelect()
     const trigger = wrapper.get('button')

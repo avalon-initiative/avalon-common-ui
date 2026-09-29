@@ -14,15 +14,17 @@ const props = withDefaults(defineProps<AvalonMultiSelectProps>(), {
   searchable: true,
   emptyText: 'No matches',
   clearLabel: 'Clear',
+  align: 'auto',
 })
 const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
 
 const popoverId = useId()
-const { open, query, root, trigger, search, list, visible, count, toggleOpen, toggle, clearAll, onKeydown, onFocusOut } =
+const { open, query, root, trigger, search, list, popover, resolvedAlign, shift, visible, count, toggleOpen, toggle, clearAll, onKeydown, onFocusOut } =
   useMultiSelect(
     () => props.options,
     () => props.modelValue,
     () => props.searchable,
+    () => props.align,
     emit,
   )
 </script>
@@ -42,7 +44,13 @@ const { open, query, root, trigger, search, list, visible, count, toggleOpen, to
       <AvalonIcon name="chevron-down" :size="16" :class="[styles.chevron, open ? styles.chevronOpen : '']" />
     </button>
 
-    <div v-show="open" :id="popoverId" :class="styles.popover">
+    <div
+      v-show="open"
+      :id="popoverId"
+      ref="popover"
+      :class="[styles.popover, resolvedAlign === 'end' ? styles.alignEnd : '']"
+      :style="{ '--av-ms-shift': `${shift}px` }"
+    >
       <div :class="styles.header">
         <div v-if="searchable" :class="styles.searchWrap">
           <AvalonIcon name="search" :size="16" :class="styles.searchIcon" />

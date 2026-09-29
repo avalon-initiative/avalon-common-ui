@@ -67,10 +67,16 @@
   background: var(--av-color-surface);
   box-shadow: var(--av-shadow-card);
   overflow: hidden;
+  transform: translateX(var(--av-ms-shift, 0));
 
   @media (max-width: 30rem) {
     width: calc(100vw - 2 * var(--av-space-4));
   }
+}
+
+.alignEnd {
+  right: 0;
+  left: auto;
 }
 
 .header {
