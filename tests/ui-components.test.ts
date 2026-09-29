@@ -1,6 +1,6 @@
 // Component render tests for every exported component. Run with `make test`.
 import { mount } from '@vue/test-utils'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import type { AvalonIconName, AvalonLegendGroup } from '../src'
 import {
   AvalonAchievementCard,
@@ -1008,14 +1008,14 @@ describe('AvalonLegend', () => {
     expect(swatches[1].classes().join(' ')).toMatch(/dot/)
   })
 
-  it('renders items that share a label when their ids differ', () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
-    const wrapper = mount(AvalonLegend, {
-      props: { groups: [{ items: [{ id: 'a', label: 'Stale' }, { id: 'b', label: 'Stale' }] }] },
-    })
+  it('keys items by id, so same-label items keep their own element across a reorder', async () => {
+    const a = { id: 'a', label: 'Stale' }
+    const b = { id: 'b', label: 'Stale' }
+    const wrapper = mount(AvalonLegend, { props: { groups: [{ items: [a, b] }] } })
     expect(wrapper.findAll('li')).toHaveLength(2)
-    expect(warn.mock.calls.flat().join(' ')).not.toMatch(/Duplicate keys/)
-    warn.mockRestore()
+    const first = wrapper.findAll('li')[0].element
+    await wrapper.setProps({ groups: [{ items: [b, a] }] })
+    expect(wrapper.findAll('li')[1].element).toBe(first)
   })
 
   it('passes the id to the glyph slot', () => {
