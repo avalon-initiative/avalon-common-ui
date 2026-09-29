@@ -1159,6 +1159,9 @@ describe('AvalonToggleSwitch', () => {
     expect(wrapper.find('input').element.disabled).toBe(true)
     await wrapper.find('input').trigger('change')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+})
+
 describe('AvalonDrawer', () => {
   it('renders a labelled complementary region with the title and slots when open', () => {
     const wrapper = mount(AvalonDrawer, {
