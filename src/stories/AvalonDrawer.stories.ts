@@ -35,3 +35,12 @@ const render: Story['render'] = (args) => ({
 export const Default: Story = { render }
 export const Closed: Story = { render, args: { open: false } }
 export const ReducedMotion: Story = { render, args: { reducedMotion: true } }
+
+// Non-prop attributes land on the drawer's own <aside>.
+export const ForwardedAttributes: Story = {
+  render: (args) => ({
+    components: { AvalonDrawer },
+    setup: () => ({ args }),
+    template: '<AvalonDrawer v-bind="args" data-testid="node-drawer" />',
+  }),
+}

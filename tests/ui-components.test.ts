@@ -12,6 +12,7 @@ import {
   AvalonCapabilityConsentRow,
   AvalonCard,
   AvalonChip,
+  AvalonChipList,
   AvalonChannelList,
   AvalonChatComposer,
   AvalonChatMessage,
@@ -1218,5 +1219,45 @@ describe('AvalonIssueList', () => {
     expect(wrapper.text()).toContain('Alerts (1)')
     expect(wrapper.text()).toContain('Stale')
     expect(wrapper.text()).toContain('node-a')
+  })
+})
+
+describe('AvalonChipList', () => {
+  it('renders a labelled list with one chip per item', () => {
+    const wrapper = mount(AvalonChipList, {
+      props: { label: 'Filters', items: [{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta', removable: false }] },
+    })
+    expect(wrapper.get('ul').attributes('aria-label')).toBe('Filters')
+    expect(wrapper.findAll('li')).toHaveLength(2)
+    expect(wrapper.findAll('button')).toHaveLength(1)
+  })
+})
+
+describe('polish 0.1.1 props render', () => {
+  it('AvalonLegend applies label and column count', () => {
+    const wrapper = mount(AvalonLegend, { props: { groups: [{ items: [{ label: 'A' }] }], label: 'Legend', columns: 2 } })
+    expect(wrapper.get('section').attributes('aria-label')).toBe('Legend')
+    expect(wrapper.get('section').classes().join(' ')).toMatch(/columns2/)
+    expect(mount(AvalonLegend, { props: { groups: [] } }).get('section').classes().join(' ')).not.toMatch(/columns\d/)
+  })
+
+  it('AvalonDetailList labels the section', () => {
+    const wrapper = mount(AvalonDetailList, { props: { label: 'Peers', items: [{ label: 'A', value: '1' }] } })
+    expect(wrapper.get('section').attributes('aria-label')).toBe('Peers')
+  })
+
+  it('AvalonToggleSwitch applies title and compact', () => {
+    const wrapper = mount(AvalonToggleSwitch, { props: { modelValue: true, label: 'X', title: 'Tip', compact: true } })
+    expect(wrapper.get('label').attributes('title')).toBe('Tip')
+    expect(wrapper.get('label').classes().join(' ')).toMatch(/compact/)
+  })
+
+  it('AvalonMultiSelect sets the popover width and shows select all only when asked', async () => {
+    const options = [{ value: 'a', label: 'A' }]
+    const wrapper = mount(AvalonMultiSelect, { props: { label: 'R', options, modelValue: [], width: '30rem', selectAll: true } })
+    expect(wrapper.get('[role="group"]').element.parentElement!.getAttribute('style')).toContain('--av-ms-width: 30rem')
+    expect(wrapper.findAll('button').map((b) => b.text())).toContain('Select all')
+    const plain = mount(AvalonMultiSelect, { props: { label: 'R', options, modelValue: [] } })
+    expect(plain.findAll('button').map((b) => b.text())).not.toContain('Select all')
   })
 })

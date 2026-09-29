@@ -17,3 +17,13 @@ export const WithDescription: Story = {
 }
 export const Disabled: Story = { args: { disabled: true, description: 'Unavailable while loading.' } }
 export const DisabledOn: Story = { args: { disabled: true, modelValue: true } }
+export const HiddenState: Story = { args: { modelValue: true, showState: false } }
+export const Compact: Story = {
+  args: {
+    modelValue: true,
+    compact: true,
+    showState: false,
+    title: 'Toggle known-only nodes',
+    description: 'Nodes seen in peer lists but not yet visited by the crawler.',
+  },
+}

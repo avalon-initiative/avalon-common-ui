@@ -23,4 +23,10 @@ export interface AvalonMultiSelectProps {
   clearLabel?: string
   /** Popover edge aligned to the trigger; 'auto' (default) picks whichever keeps it on screen. */
   align?: 'start' | 'end' | 'auto'
+  /** CSS length of the popover width (default 20rem); still capped to the viewport. */
+  width?: string
+  /** Show a button that ticks every currently visible (search-filtered) option (default false). */
+  selectAll?: boolean
+  /** Text of the select-all button. */
+  selectAllLabel?: string
 }

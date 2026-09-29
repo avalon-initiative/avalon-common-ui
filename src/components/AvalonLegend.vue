@@ -7,7 +7,7 @@ defineProps<AvalonLegendProps>()
 </script>
 
 <template>
-  <section :class="styles.legend">
+  <section :class="[styles.legend, columns ? styles[`columns${columns}`] : '']" :aria-label="label">
     <div v-for="(group, index) in groups" :key="group.title ?? index" :class="styles.group">
       <h3 v-if="group.title" :class="styles.title">{{ group.title }}</h3>
       <ul :class="styles.list">

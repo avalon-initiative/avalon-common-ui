@@ -20,6 +20,12 @@ export function toggleValue(selected: string[], value: string): string[] {
   return selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]
 }
 
+/** The selection plus every option in `visible` not yet selected; existing order is kept. */
+export function selectAllValues(selected: string[], visible: AvalonMultiSelectOption[]): string[] {
+  const have = new Set(selected)
+  return [...selected, ...visible.map((o) => o.value).filter((v) => !have.has(v))]
+}
+
 const VIEWPORT_GUTTER = 16
 
 export function clear(): string[] {
@@ -124,6 +130,15 @@ export function useMultiSelect(
     emit('update:modelValue', toggleValue(getSelected(), value))
   }
 
+  function selectAllVisible() {
+    emit('update:modelValue', selectAllValues(getSelected(), visible.value))
+  }
+
+  const allVisibleSelected = computed(() => {
+    const have = new Set(getSelected())
+    return visible.value.every((o) => have.has(o.value))
+  })
+
   function clearAll() {
     emit('update:modelValue', clear())
   }
@@ -177,6 +192,8 @@ export function useMultiSelect(
     toggleOpen,
     toggle,
     clearAll,
+    selectAllVisible,
+    allVisibleSelected,
     onKeydown,
     onFocusOut,
   }

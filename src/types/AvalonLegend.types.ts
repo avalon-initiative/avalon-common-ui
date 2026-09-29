@@ -27,4 +27,8 @@ export interface AvalonLegendGroup {
 
 export interface AvalonLegendProps {
   groups: AvalonLegendGroup[]
+  /** Accessible name of the legend section. */
+  label?: string
+  /** Most columns when wide; each is still at least 11rem. Defaults to auto (up to 3). */
+  columns?: 1 | 2 | 3
 }

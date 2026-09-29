@@ -80,3 +80,17 @@ const atRight = () => ({
 export const RightEdgeAuto: Story = { decorators: [atRight] }
 
 export const ForcedEnd: Story = { args: { align: 'end' } }
+
+export const SelectAll: Story = { args: { selectAll: true, modelValue: ['witness'] } }
+
+export const CustomWidth: Story = {
+  args: {
+    selectAll: true,
+    width: '32rem',
+    options: [
+      { value: 'a3f9c2d1', label: 'a3f9c2d1', description: 'hoster on 192.168.7.113' },
+      { value: 'b71e04c9', label: 'b71e04c9', description: 'witness on 192.168.7.174' },
+      { value: 'c0d2ee58', label: 'c0d2ee58', description: 'indexer on 192.168.7.239' },
+    ],
+  },
+}

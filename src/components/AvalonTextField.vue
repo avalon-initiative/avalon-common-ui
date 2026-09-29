@@ -14,7 +14,7 @@ defineEmits<{ 'update:modelValue': [value: string] }>()
 
 <template>
   <label :class="styles.field">
-    <span :class="styles.label">{{ label }}</span>
+    <span :class="[styles.label, labelHidden ? styles.srOnly : '']">{{ label }}</span>
     <input
       :class="[styles.input, error ? styles.inputError : '']"
       :type="type"

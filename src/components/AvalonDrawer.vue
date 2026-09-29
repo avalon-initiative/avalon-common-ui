@@ -6,6 +6,7 @@ import styles from '../styles/AvalonDrawer.module.scss'
 import { useDrawerBehavior } from '../state/AvalonDrawer.state'
 import type { AvalonDrawerProps } from '../types/AvalonDrawer.types'
 
+defineOptions({ inheritAttrs: false })
 const props = withDefaults(defineProps<AvalonDrawerProps>(), { closeLabel: 'Close', reducedMotion: false })
 const emit = defineEmits<{ close: [] }>()
 
@@ -28,6 +29,7 @@ useDrawerBehavior(() => props.open, panel, () => emit('close'))
       role="complementary"
       :aria-label="label ?? title"
       tabindex="-1"
+      v-bind="$attrs"
     >
       <header :class="styles.header">
         <h2 :class="styles.title">{{ title }}</h2>

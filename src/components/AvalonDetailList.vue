@@ -7,10 +7,10 @@ defineProps<AvalonDetailListProps>()
 </script>
 
 <template>
-  <section :class="styles.detail">
+  <section :class="styles.detail" :aria-label="label">
     <h3 v-if="title" :class="styles.title">{{ title }}</h3>
     <dl :class="styles.list">
-      <div v-for="item in items" :key="item.label" :class="[styles.row, item.block ? styles.blockRow : '']">
+      <div v-for="(item, index) in items" :key="item.id ?? `${item.label}-${index}`" :class="[styles.row, item.block ? styles.blockRow : '']">
         <dt :class="styles.label">{{ item.label }}</dt>
         <dd :class="[styles.value, item.mono || item.block ? styles.mono : '', item.block ? styles.block : '']">{{ item.value }}</dd>
       </div>
