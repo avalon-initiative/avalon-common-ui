@@ -61,13 +61,13 @@ export const CustomGlyphs: Story = {
   args: {
     groups: [
       { title: 'Node role (shape)', items: [
-        { label: 'Hoster (hexagon)', tone: 'primary' },
-        { label: 'Witness (diamond)', tone: 'secondary' },
-        { label: 'Alert (badge)', tone: 'danger' },
+        { id: 'hoster', label: 'Hoster (hexagon)', tone: 'primary' },
+        { id: 'witness', label: 'Witness (diamond)', tone: 'secondary' },
+        { id: 'alert', label: 'Alert (badge)', tone: 'danger' },
       ] },
       { title: 'Version ring', items: [
-        { label: 'Newest (solid ring)', tone: 'success' },
-        { label: 'Behind (dashed ring)', tone: 'warning' },
+        { id: 'ring-newest', label: 'Newest (solid ring)', tone: 'success' },
+        { id: 'ring-behind', label: 'Behind (dashed ring)', tone: 'warning' },
       ] },
     ],
   },
@@ -78,15 +78,15 @@ export const CustomGlyphs: Story = {
       <AvalonLegend v-bind="args">
         <template #glyph="{ item }">
           <svg viewBox="-16 -16 32 32" width="28" height="28" aria-hidden="true">
-            <polygon v-if="item.label.startsWith('Hoster')" points="0,-9 8,-4.5 8,4.5 0,9 -8,4.5 -8,-4.5" :fill="'var(--av-color-primary)'" />
-            <polygon v-else-if="item.label.startsWith('Witness')" points="0,-9 9,0 0,9 -9,0" :fill="'var(--av-color-accent-secondary)'" />
-            <template v-else-if="item.label.startsWith('Alert')">
+            <polygon v-if="item.id === 'hoster'" points="0,-9 8,-4.5 8,4.5 0,9 -8,4.5 -8,-4.5" :fill="'var(--av-color-primary)'" />
+            <polygon v-else-if="item.id === 'witness'" points="0,-9 9,0 0,9 -9,0" :fill="'var(--av-color-accent-secondary)'" />
+            <template v-else-if="item.id === 'alert'">
               <circle r="7" :fill="'var(--av-color-text-muted)'" />
               <circle cx="9" cy="-9" r="6" :fill="'var(--av-color-danger)'" />
             </template>
             <template v-else>
               <circle r="7" :fill="'var(--av-color-primary)'" />
-              <circle r="11" fill="none" stroke-width="2" :stroke="item.tone === 'success' ? 'var(--av-color-success)' : 'var(--av-color-warning)'" :stroke-dasharray="item.tone === 'success' ? undefined : '3 3'" />
+              <circle r="11" fill="none" stroke-width="2" :stroke="item.id === 'ring-newest' ? 'var(--av-color-success)' : 'var(--av-color-warning)'" :stroke-dasharray="item.id === 'ring-newest' ? undefined : '3 3'" />
             </template>
           </svg>
         </template>

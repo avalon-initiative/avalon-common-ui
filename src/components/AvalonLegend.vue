@@ -11,7 +11,7 @@ defineProps<AvalonLegendProps>()
     <div v-for="(group, index) in groups" :key="group.title ?? index" :class="styles.group">
       <h3 v-if="group.title" :class="styles.title">{{ group.title }}</h3>
       <ul :class="styles.list">
-        <li v-for="item in group.items" :key="item.label" :class="styles.item">
+        <li v-for="item in group.items" :key="item.id ?? item.label" :class="styles.item">
           <slot name="glyph" :item="item">
             <span :class="[styles.swatch, styles[item.shape ?? 'dot'], styles[item.tone ?? 'primary']]" />
           </slot>

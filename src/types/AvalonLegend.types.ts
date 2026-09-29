@@ -11,6 +11,8 @@ export type AvalonLegendTone =
 export type AvalonLegendShape = 'dot' | 'solid' | 'dashed' | 'dotted'
 
 export interface AvalonLegendItem {
+  /** Stable key and hook for the glyph slot; falls back to the label. */
+  id?: string
   label: string
   /** Defaults to 'primary'. */
   tone?: AvalonLegendTone

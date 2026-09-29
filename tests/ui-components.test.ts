@@ -1,6 +1,6 @@
 // Component render tests for every exported component. Run with `make test`.
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { AvalonIconName, AvalonLegendGroup } from '../src'
 import {
   AvalonAchievementCard,
@@ -1006,6 +1006,24 @@ describe('AvalonLegend', () => {
     const swatches = wrapper.findAll('li > span:first-child')
     expect(swatches[0].classes().join(' ')).toMatch(/solid/)
     expect(swatches[1].classes().join(' ')).toMatch(/dot/)
+  })
+
+  it('renders items that share a label when their ids differ', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const wrapper = mount(AvalonLegend, {
+      props: { groups: [{ items: [{ id: 'a', label: 'Stale' }, { id: 'b', label: 'Stale' }] }] },
+    })
+    expect(wrapper.findAll('li')).toHaveLength(2)
+    expect(warn.mock.calls.flat().join(' ')).not.toMatch(/Duplicate keys/)
+    warn.mockRestore()
+  })
+
+  it('passes the id to the glyph slot', () => {
+    const wrapper = mount(AvalonLegend, {
+      props: { groups: [{ items: [{ id: 'a', label: 'Stale' }, { id: 'b', label: 'Stale' }] }] },
+      slots: { glyph: `<template #glyph="{ item }"><svg :data-id="item.id" /></template>` },
+    })
+    expect(wrapper.findAll('svg').map((g) => g.attributes('data-id'))).toEqual(['a', 'b'])
   })
 
   it('replaces the built-in marker with the glyph slot, passing the item', () => {
