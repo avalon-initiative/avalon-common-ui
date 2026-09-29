@@ -63,6 +63,7 @@ export type {
 } from './types/AvalonAchievementCard.types'
 export type { AvalonStatusBadgeProps, AvalonStatusTone } from './types/AvalonStatusBadge.types'
 export type {
+  AvalonLegendGroup,
   AvalonLegendItem,
   AvalonLegendProps,
   AvalonLegendShape,
@@ -74,3 +75,5 @@ export type {
   AvalonMultiSelectProps,
 } from './types/AvalonMultiSelect.types'
 export type { AvalonChipProps } from './types/AvalonChip.types'
+export type { AvalonToggleSwitchProps } from './types/AvalonToggleSwitch.types'
+export { default as AvalonToggleSwitch } from './components/AvalonToggleSwitch.vue'

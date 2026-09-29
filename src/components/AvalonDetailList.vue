@@ -10,9 +10,9 @@ defineProps<AvalonDetailListProps>()
   <section :class="styles.detail">
     <h3 v-if="title" :class="styles.title">{{ title }}</h3>
     <dl :class="styles.list">
-      <div v-for="item in items" :key="item.label" :class="styles.row">
+      <div v-for="item in items" :key="item.label" :class="[styles.row, item.block ? styles.blockRow : '']">
         <dt :class="styles.label">{{ item.label }}</dt>
-        <dd :class="[styles.value, item.mono ? styles.mono : '']">{{ item.value }}</dd>
+        <dd :class="[styles.value, item.mono || item.block ? styles.mono : '', item.block ? styles.block : '']">{{ item.value }}</dd>
       </div>
     </dl>
   </section>

@@ -1,12 +1,13 @@
 // Component render tests for every exported component. Run with `make test`.
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import type { AvalonIconName } from '../src'
+import type { AvalonIconName, AvalonLegendGroup } from '../src'
 import {
   AvalonAchievementCard,
   AvalonAvatar,
   AvalonBadgeIcon,
   AvalonBottomNav,
+  AvalonButton,
   AvalonCalendarMonth,
   AvalonCapabilityConsentRow,
   AvalonCard,
@@ -38,6 +39,7 @@ import {
   AvalonSidebarNav,
   AvalonStatusBadge,
   AvalonSuggestionRow,
+  AvalonToggleSwitch,
   AvalonUserChip,
   AvalonWarningBanner,
 } from '../src'
@@ -981,27 +983,40 @@ describe('AvalonStatusBadge', () => {
 })
 
 describe('AvalonLegend', () => {
-  const items = [
-    { label: 'Active', shape: 'solid', tone: 'primary' },
-    { label: 'Known only' },
-  ] as const
+  const groups: AvalonLegendGroup[] = [
+    { title: 'Links', items: [{ label: 'Active', shape: 'solid', tone: 'primary' }, { label: 'Known only' }] },
+    { title: 'Nodes', items: [{ label: 'Healthy', tone: 'success' }] },
+  ]
 
-  it('renders one entry per item, and the title when given', () => {
-    const wrapper = mount(AvalonLegend, { props: { title: 'Links', items: [...items] } })
-    expect(wrapper.text()).toContain('Links')
-    expect(wrapper.findAll('li')).toHaveLength(2)
+  it('renders a titled group with one entry per item', () => {
+    const wrapper = mount(AvalonLegend, { props: { groups } })
+    expect(wrapper.findAll('h3').map((h) => h.text())).toEqual(['Links', 'Nodes'])
+    expect(wrapper.findAll('ul')).toHaveLength(2)
+    expect(wrapper.findAll('li')).toHaveLength(3)
   })
 
-  it('omits the title when none is given', () => {
-    const wrapper = mount(AvalonLegend, { props: { items: [...items] } })
+  it('omits the heading for a group without a title', () => {
+    const wrapper = mount(AvalonLegend, { props: { groups: [{ items: [{ label: 'Active' }] }] } })
     expect(wrapper.find('h3').exists()).toBe(false)
+    expect(wrapper.findAll('li')).toHaveLength(1)
   })
 
   it('draws a line for line shapes and a dot by default', () => {
-    const wrapper = mount(AvalonLegend, { props: { items: [...items] } })
-    const swatches = wrapper.findAll('li > span')
+    const wrapper = mount(AvalonLegend, { props: { groups } })
+    const swatches = wrapper.findAll('li > span:first-child')
     expect(swatches[0].classes().join(' ')).toMatch(/solid/)
     expect(swatches[1].classes().join(' ')).toMatch(/dot/)
+  })
+
+  it('replaces the built-in marker with the glyph slot, passing the item', () => {
+    const wrapper = mount(AvalonLegend, {
+      props: { groups },
+      slots: { glyph: `<template #glyph="{ item }"><svg data-glyph :data-label="item.label" /></template>` },
+    })
+    const glyphs = wrapper.findAll('svg[data-glyph]')
+    expect(glyphs.map((g) => g.attributes('data-label'))).toEqual(['Active', 'Known only', 'Healthy'])
+    expect(wrapper.find('li > span[class*="swatch"]').exists()).toBe(false)
+    expect(wrapper.findAll('li')[0].text()).toBe('Active')
   })
 })
 
@@ -1042,5 +1057,84 @@ describe('AvalonChip', () => {
     const wrapper = mount(AvalonChip, { props: { label: 'validator' } })
     expect(wrapper.text()).toContain('validator')
     expect(wrapper.find('button').exists()).toBe(true)
+describe('AvalonDetailList block rows', () => {
+  const items = [
+    { label: 'Role', value: 'Hoster' },
+    { label: 'Error', value: 'line one\nline two', block: true },
+  ]
+
+  it('renders a block value as a preformatted mono block on its own row', () => {
+    const wrapper = mount(AvalonDetailList, { props: { items } })
+    const rows = wrapper.findAll('dl > div')
+    expect(rows[0].classes().join(' ')).not.toMatch(/blockRow/)
+    expect(rows[1].classes().join(' ')).toMatch(/blockRow/)
+    const value = wrapper.findAll('dd')[1]
+    expect(value.classes().join(' ')).toMatch(/block/)
+    expect(value.classes().join(' ')).toMatch(/mono/)
+    expect(value.text()).toBe('line one\nline two')
+  })
+
+  it('leaves the other rows without the block style', () => {
+    const wrapper = mount(AvalonDetailList, { props: { items } })
+    expect(wrapper.findAll('dd')[0].classes().join(' ')).not.toMatch(/block|mono/)
+  })
+})
+
+describe('AvalonButton', () => {
+  it('renders its label and is enabled by default', () => {
+    const wrapper = mount(AvalonButton, { props: { label: 'Save' } })
+    expect(wrapper.text()).toBe('Save')
+    expect(wrapper.find('button').element.disabled).toBe(false)
+  })
+
+  it('sets the native disabled attribute from the prop', () => {
+    const wrapper = mount(AvalonButton, { props: { label: 'Save', disabled: true } })
+    expect(wrapper.find('button').element.disabled).toBe(true)
+  })
+
+  it('fires click when enabled and not when disabled', async () => {
+    let clicks = 0
+    const attrs = { onClick: () => clicks++ }
+    const enabled = mount(AvalonButton, { props: { label: 'Save' }, attrs })
+    await enabled.find('button').trigger('click')
+    expect(clicks).toBe(1)
+    const disabled = mount(AvalonButton, { props: { label: 'Save', disabled: true }, attrs })
+    await disabled.find('button').trigger('click')
+    expect(clicks).toBe(1)
+  })
+})
+
+describe('AvalonToggleSwitch', () => {
+  it('renders a checkbox with role switch, the label and the description', () => {
+    const wrapper = mount(AvalonToggleSwitch, { props: { modelValue: false, label: 'Known only', description: 'Not visited' } })
+    const input = wrapper.find('input')
+    expect(input.attributes('type')).toBe('checkbox')
+    expect(input.attributes('role')).toBe('switch')
+    expect(wrapper.text()).toContain('Known only')
+    expect(wrapper.text()).toContain('Not visited')
+  })
+
+  it('shows On or Off text for the state', () => {
+    const off = mount(AvalonToggleSwitch, { props: { modelValue: false, label: 'X' } })
+    const on = mount(AvalonToggleSwitch, { props: { modelValue: true, label: 'X' } })
+    expect(off.get('[data-testid="switch-state"]').text()).toBe('Off')
+    expect(on.get('[data-testid="switch-state"]').text()).toBe('On')
+    expect(on.find('input').element.checked).toBe(true)
+  })
+
+  it('emits update:modelValue with the new state in both directions', async () => {
+    const off = mount(AvalonToggleSwitch, { props: { modelValue: false, label: 'X' } })
+    await off.find('input').setValue(true)
+    expect(off.emitted('update:modelValue')).toEqual([[true]])
+    const on = mount(AvalonToggleSwitch, { props: { modelValue: true, label: 'X' } })
+    await on.find('input').setValue(false)
+    expect(on.emitted('update:modelValue')).toEqual([[false]])
+  })
+
+  it('is disabled and emits nothing when disabled', async () => {
+    const wrapper = mount(AvalonToggleSwitch, { props: { modelValue: false, label: 'X', disabled: true } })
+    expect(wrapper.find('input').element.disabled).toBe(true)
+    await wrapper.find('input').trigger('change')
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
   })
 })
