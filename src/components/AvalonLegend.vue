@@ -8,12 +8,16 @@ defineProps<AvalonLegendProps>()
 
 <template>
   <section :class="styles.legend">
-    <h3 v-if="title" :class="styles.title">{{ title }}</h3>
-    <ul :class="styles.list">
-      <li v-for="item in items" :key="item.label" :class="styles.item">
-        <span :class="[styles.swatch, styles[item.shape ?? 'dot'], styles[item.tone ?? 'primary']]" />
-        {{ item.label }}
-      </li>
-    </ul>
+    <div v-for="(group, index) in groups" :key="group.title ?? index" :class="styles.group">
+      <h3 v-if="group.title" :class="styles.title">{{ group.title }}</h3>
+      <ul :class="styles.list">
+        <li v-for="item in group.items" :key="item.id ?? item.label" :class="styles.item">
+          <slot name="glyph" :item="item">
+            <span :class="[styles.swatch, styles[item.shape ?? 'dot'], styles[item.tone ?? 'primary']]" />
+          </slot>
+          <span :class="styles.text">{{ item.label }}</span>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
