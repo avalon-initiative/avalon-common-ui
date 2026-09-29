@@ -83,6 +83,7 @@ export type { AvalonToggleSwitchProps } from './types/AvalonToggleSwitch.types'
 export { default as AvalonToggleSwitch } from './components/AvalonToggleSwitch.vue'
 export type { AvalonDrawerProps } from './types/AvalonDrawer.types'
 export type { AvalonTab, AvalonTabsProps } from './types/AvalonTabs.types'
+export type {
   AvalonTimelineItem,
   AvalonTimelineStripProps,
   AvalonTimelineTone,

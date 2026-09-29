@@ -1196,6 +1196,9 @@ describe('AvalonTabs', () => {
     expect(wrapper.get('[role=tablist]').attributes('aria-label')).toBe('Tools')
     expect(wrapper.findAll('[role=tab]').map((t) => t.text())).toEqual(['A2', 'B'])
     expect(wrapper.findAll('[role=tabpanel]')).toHaveLength(2)
+  })
+})
+
 describe('AvalonTimelineStrip', () => {
   it('renders a numbered card per item', () => {
     const wrapper = mount(AvalonTimelineStrip, {
