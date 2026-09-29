@@ -41,6 +41,8 @@ export { default as AvalonLegend } from './components/AvalonLegend.vue'
 export { default as AvalonDetailList } from './components/AvalonDetailList.vue'
 export { default as AvalonDrawer } from './components/AvalonDrawer.vue'
 export { default as AvalonTabs } from './components/AvalonTabs.vue'
+export { default as AvalonTimelineStrip } from './components/AvalonTimelineStrip.vue'
+export { default as AvalonIssueList } from './components/AvalonIssueList.vue'
 export type { AvalonBadgeIconProps, AvalonBadgeTier } from './types/AvalonBadgeIcon.types'
 export type { AvalonIconName } from './types/AvalonIcon.types'
 export type { AvalonNavItem } from './types/AvalonNav.types'
@@ -81,3 +83,9 @@ export type { AvalonToggleSwitchProps } from './types/AvalonToggleSwitch.types'
 export { default as AvalonToggleSwitch } from './components/AvalonToggleSwitch.vue'
 export type { AvalonDrawerProps } from './types/AvalonDrawer.types'
 export type { AvalonTab, AvalonTabsProps } from './types/AvalonTabs.types'
+export type {
+  AvalonTimelineItem,
+  AvalonTimelineStripProps,
+  AvalonTimelineTone,
+} from './types/AvalonTimelineStrip.types'
+export type { AvalonIssueListItem, AvalonIssueListProps, AvalonIssueTone } from './types/AvalonIssueList.types'

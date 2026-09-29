@@ -38,7 +38,9 @@ import {
   AvalonRsvpControl,
   AvalonRsvpRosterPanel,
   AvalonSidebarNav,
+  AvalonIssueList,
   AvalonStatusBadge,
+  AvalonTimelineStrip,
   AvalonSuggestionRow,
   AvalonToggleSwitch,
   AvalonTabs,
@@ -1194,5 +1196,27 @@ describe('AvalonTabs', () => {
     expect(wrapper.get('[role=tablist]').attributes('aria-label')).toBe('Tools')
     expect(wrapper.findAll('[role=tab]').map((t) => t.text())).toEqual(['A2', 'B'])
     expect(wrapper.findAll('[role=tabpanel]')).toHaveLength(2)
+  })
+})
+
+describe('AvalonTimelineStrip', () => {
+  it('renders a numbered card per item', () => {
+    const wrapper = mount(AvalonTimelineStrip, {
+      props: { items: [{ id: 'a', note: 'first' }, { id: 'b', subtitle: '10:05', tag: 'latest' }] },
+    })
+    expect(wrapper.findAll('li button')).toHaveLength(2)
+    expect(wrapper.text()).toContain('first')
+    expect(wrapper.text()).toContain('latest')
+  })
+})
+
+describe('AvalonIssueList', () => {
+  it('renders the heading, badge and primary text', () => {
+    const wrapper = mount(AvalonIssueList, {
+      props: { title: 'Alerts', items: [{ id: 'a', badge: 'Stale', tone: 'warning', primary: 'node-a' }] },
+    })
+    expect(wrapper.text()).toContain('Alerts (1)')
+    expect(wrapper.text()).toContain('Stale')
+    expect(wrapper.text()).toContain('node-a')
   })
 })
