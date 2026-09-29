@@ -32,3 +32,16 @@ export const WithBlock: Story = {
     ],
   },
 }
+
+export const DuplicateLabels: Story = {
+  args: {
+    label: 'Peer addresses',
+    title: 'Peers',
+    items: [
+      { id: 'peer-a', label: 'Peer', value: 'http://192.168.7.113:8080', mono: true },
+      { id: 'peer-b', label: 'Peer', value: 'http://192.168.7.174:8080', mono: true },
+      { label: 'Peer', value: 'http://192.168.7.239:8080', mono: true },
+      { label: 'Peer', value: 'http://192.168.7.240:8080', mono: true },
+    ],
+  },
+}

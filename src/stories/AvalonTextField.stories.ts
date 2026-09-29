@@ -16,3 +16,6 @@ export const Error: Story = {
   args: { modelValue: '', error: 'Display name is required.' },
 }
 export const Disabled: Story = { args: { modelValue: 'Avalon User', disabled: true } }
+export const LabelHidden: Story = {
+  args: { label: 'Search nodes', labelHidden: true, placeholder: 'Search nodes' },
+}

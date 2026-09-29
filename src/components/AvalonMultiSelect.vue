@@ -15,11 +15,12 @@ const props = withDefaults(defineProps<AvalonMultiSelectProps>(), {
   emptyText: 'No matches',
   clearLabel: 'Clear',
   align: 'auto',
+  selectAllLabel: 'Select all',
 })
 const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
 
 const popoverId = useId()
-const { open, query, root, trigger, search, list, popover, resolvedAlign, shift, visible, count, toggleOpen, toggle, clearAll, onKeydown, onFocusOut } =
+const { open, query, root, trigger, search, list, popover, resolvedAlign, shift, visible, count, toggleOpen, toggle, clearAll, selectAllVisible, allVisibleSelected, onKeydown, onFocusOut } =
   useMultiSelect(
     () => props.options,
     () => props.modelValue,
@@ -49,7 +50,7 @@ const { open, query, root, trigger, search, list, popover, resolvedAlign, shift,
       :id="popoverId"
       ref="popover"
       :class="[styles.popover, resolvedAlign === 'end' ? styles.alignEnd : '']"
-      :style="{ '--av-ms-shift': `${shift}px` }"
+      :style="{ '--av-ms-shift': `${shift}px`, '--av-ms-width': width }"
     >
       <div :class="styles.header">
         <div v-if="searchable" :class="styles.searchWrap">
@@ -64,6 +65,15 @@ const { open, query, root, trigger, search, list, popover, resolvedAlign, shift,
             autocomplete="off"
           />
         </div>
+        <button
+          v-if="selectAll"
+          type="button"
+          :class="styles.selectAll"
+          :disabled="visible.length === 0 || allVisibleSelected"
+          @click="selectAllVisible"
+        >
+          {{ selectAllLabel }}
+        </button>
         <button type="button" :class="styles.clear" :disabled="count === 0" @click="clearAll">
           {{ clearLabel }}
         </button>

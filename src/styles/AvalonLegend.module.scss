@@ -4,6 +4,18 @@
   column-gap: var(--av-space-4);
 }
 
+.columns1 {
+  columns: 1 11rem;
+}
+
+.columns2 {
+  columns: 2 11rem;
+}
+
+.columns3 {
+  columns: 3 11rem;
+}
+
 .group {
   margin-bottom: var(--av-space-2);
   break-inside: avoid;

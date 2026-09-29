@@ -59,7 +59,7 @@
   z-index: 20;
   display: flex;
   flex-direction: column;
-  width: 20rem;
+  width: var(--av-ms-width, 20rem);
   max-width: calc(100vw - 2 * var(--av-space-4));
   max-height: min(24rem, 70vh);
   border: 1px solid var(--av-color-border-strong);
@@ -124,7 +124,8 @@
   }
 }
 
-.clear {
+.clear,
+.selectAll {
   flex-shrink: 0;
   margin-left: auto;
   padding: 0.4rem var(--av-space-2);
@@ -148,6 +149,10 @@
     color: var(--av-color-text-muted);
     cursor: not-allowed;
   }
+}
+
+.selectAll + .clear {
+  margin-left: 0;
 }
 
 .list {

@@ -3,12 +3,12 @@
 import styles from '../styles/AvalonToggleSwitch.module.scss'
 import type { AvalonToggleSwitchProps } from '../types/AvalonToggleSwitch.types'
 
-defineProps<AvalonToggleSwitchProps>()
+withDefaults(defineProps<AvalonToggleSwitchProps>(), { showState: true })
 defineEmits<{ 'update:modelValue': [value: boolean] }>()
 </script>
 
 <template>
-  <label :class="[styles.root, disabled ? styles.disabled : '']">
+  <label :class="[styles.root, compact ? styles.compact : '', disabled ? styles.disabled : '']" :title="title">
     <input
       type="checkbox"
       role="switch"
@@ -22,6 +22,6 @@ defineEmits<{ 'update:modelValue': [value: boolean] }>()
       <span :class="styles.label">{{ label }}</span>
       <span v-if="description" :class="styles.description">{{ description }}</span>
     </span>
-    <span :class="styles.state" data-testid="switch-state">{{ modelValue ? 'On' : 'Off' }}</span>
+    <span :class="[styles.state, showState ? '' : styles.srOnly]" data-testid="switch-state">{{ modelValue ? 'On' : 'Off' }}</span>
   </label>
 </template>

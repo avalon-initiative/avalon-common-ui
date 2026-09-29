@@ -93,3 +93,9 @@ export const CustomGlyphs: Story = {
       </AvalonLegend>`,
   }),
 }
+
+const labelled = { ...Grouped.args, label: 'Topology legend' }
+
+export const OneColumn: Story = { args: { ...labelled, columns: 1 } }
+export const TwoColumns: Story = { args: { ...labelled, columns: 2 } }
+export const ThreeColumns: Story = { args: { ...labelled, columns: 3 } }
