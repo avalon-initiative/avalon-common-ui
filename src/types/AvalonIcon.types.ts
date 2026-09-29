@@ -16,6 +16,7 @@ export type AvalonIconName =
   | 'pencil'
   | 'check'
   | 'close'
+  | 'chevron-down'
   // Added for issue #311 (IconMock.png's full icon set) — grouped to match
   // that sheet's own sections.
   // Core navigation & features

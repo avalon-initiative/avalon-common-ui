@@ -96,6 +96,9 @@ withDefaults(defineProps<AvalonIconProps>(), {
     <template v-else-if="name === 'close'">
       <path d="M5.5 5.5 18.5 18.5M18.5 5.5 5.5 18.5" />
     </template>
+    <template v-else-if="name === 'chevron-down'">
+      <path d="m6 9.5 6 6 6-6" />
+    </template>
     <template v-else-if="name === 'settings'">
       <circle cx="12" cy="12" r="3" />
       <path
