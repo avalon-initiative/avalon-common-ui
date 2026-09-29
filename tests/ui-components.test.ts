@@ -19,6 +19,7 @@ import {
   AvalonConnectionCard,
   AvalonDateTimeField,
   AvalonDetailList,
+  AvalonDrawer,
   AvalonEventCard,
   AvalonFilterBar,
   AvalonForm,
@@ -40,6 +41,7 @@ import {
   AvalonStatusBadge,
   AvalonSuggestionRow,
   AvalonToggleSwitch,
+  AvalonTabs,
   AvalonUserChip,
   AvalonWarningBanner,
 } from '../src'
@@ -1157,5 +1159,40 @@ describe('AvalonToggleSwitch', () => {
     expect(wrapper.find('input').element.disabled).toBe(true)
     await wrapper.find('input').trigger('change')
     expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+})
+
+describe('AvalonDrawer', () => {
+  it('renders a labelled complementary region with the title and slots when open', () => {
+    const wrapper = mount(AvalonDrawer, {
+      props: { open: true, title: 'Details' },
+      slots: { default: '<p>body</p>', actions: '<button>Go</button>' },
+    })
+    const aside = wrapper.get('aside')
+    expect(aside.attributes('role')).toBe('complementary')
+    expect(aside.attributes('aria-label')).toBe('Details')
+    expect(wrapper.get('h2').text()).toBe('Details')
+    expect(wrapper.text()).toContain('body')
+    expect(wrapper.text()).toContain('Go')
+  })
+
+  it('renders nothing when closed', () => {
+    expect(mount(AvalonDrawer, { props: { open: false, title: 'Details' } }).find('aside').exists()).toBe(false)
+  })
+})
+
+describe('AvalonTabs', () => {
+  it('renders a tablist with a tab and a panel per tab', () => {
+    const wrapper = mount(AvalonTabs, {
+      props: {
+        tabs: [{ id: 'a', label: 'A', badge: '2' }, { id: 'b', label: 'B' }],
+        modelValue: 'a',
+        label: 'Tools',
+      },
+      slots: { a: 'first', b: 'second' },
+    })
+    expect(wrapper.get('[role=tablist]').attributes('aria-label')).toBe('Tools')
+    expect(wrapper.findAll('[role=tab]').map((t) => t.text())).toEqual(['A2', 'B'])
+    expect(wrapper.findAll('[role=tabpanel]')).toHaveLength(2)
   })
 })
