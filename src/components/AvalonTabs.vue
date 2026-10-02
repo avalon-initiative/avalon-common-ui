@@ -6,7 +6,7 @@ import styles from '../styles/AvalonTabs.module.scss'
 import { nextTabsPrefix, panelDomId, tabAfterKey, tabDomId } from '../state/AvalonTabs.state'
 import type { AvalonTabsProps } from '../types/AvalonTabs.types'
 
-const props = withDefaults(defineProps<AvalonTabsProps>(), { keepAlive: true })
+const props = withDefaults(defineProps<AvalonTabsProps>(), { keepAlive: true, size: 'md' })
 const active = defineModel<string>({ required: true })
 
 const prefix = nextTabsPrefix()
@@ -30,7 +30,7 @@ async function onKey(e: KeyboardEvent) {
         :key="tab.id"
         type="button"
         role="tab"
-        :class="[styles.tab, active === tab.id && styles.current]"
+        :class="[styles.tab, size === 'lg' && styles.large, active === tab.id && styles.current]"
         :aria-selected="active === tab.id"
         :aria-controls="panelDomId(prefix, tab.id)"
         :tabindex="active === tab.id ? 0 : -1"

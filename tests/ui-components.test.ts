@@ -1198,6 +1198,13 @@ describe('AvalonTabs', () => {
     expect(wrapper.findAll('[role=tab]').map((t) => t.text())).toEqual(['A2', 'B'])
     expect(wrapper.findAll('[role=tabpanel]')).toHaveLength(2)
   })
+
+  it('marks the tabs large only when asked', () => {
+    const props = { tabs: [{ id: 'a', label: 'A' }], modelValue: 'a' }
+    const slots = { a: 'first' }
+    expect(mount(AvalonTabs, { props, slots }).get('[role=tab]').classes().some((c) => c.includes('large'))).toBe(false)
+    expect(mount(AvalonTabs, { props: { ...props, size: 'lg' }, slots }).get('[role=tab]').classes().some((c) => c.includes('large'))).toBe(true)
+  })
 })
 
 describe('AvalonTimelineStrip', () => {

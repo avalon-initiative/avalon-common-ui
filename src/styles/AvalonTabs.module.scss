@@ -41,6 +41,11 @@
   }
 }
 
+.large {
+  padding: var(--av-space-3) var(--av-space-4);
+  font-size: var(--av-text-md);
+}
+
 .current {
   border-bottom-color: var(--av-color-primary);
   color: var(--av-color-text);
