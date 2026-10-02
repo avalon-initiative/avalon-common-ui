@@ -38,6 +38,7 @@ import {
   AvalonRoleBadge,
   AvalonRsvpControl,
   AvalonRsvpRosterPanel,
+  AvalonSelect,
   AvalonSidebarNav,
   AvalonIssueList,
   AvalonStatusBadge,
@@ -1204,6 +1205,55 @@ describe('AvalonTabs', () => {
     const slots = { a: 'first' }
     expect(mount(AvalonTabs, { props, slots }).get('[role=tab]').classes().some((c) => c.includes('large'))).toBe(false)
     expect(mount(AvalonTabs, { props: { ...props, size: 'lg' }, slots }).get('[role=tab]').classes().some((c) => c.includes('large'))).toBe(true)
+  })
+})
+
+describe('AvalonSelect', () => {
+  const options = [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta', description: 'second' }, { value: 'c', label: 'Gamma' }]
+  const mountSelect = (modelValue = '') => mount(AvalonSelect, { props: { options, modelValue, label: 'Network', placeholder: 'Pick one' }, attachTo: document.body })
+
+  it('shows the placeholder, then the chosen label', () => {
+    expect(mountSelect().get('button').text()).toContain('Pick one')
+    expect(mountSelect('b').get('button').text()).toContain('Beta')
+  })
+
+  it('opens, filters by what is typed, and chooses on click', async () => {
+    const wrapper = mountSelect()
+    await wrapper.get('button').trigger('click')
+    expect(wrapper.findAll('[role=option]')).toHaveLength(3)
+    await wrapper.get('input').setValue('gam')
+    expect(wrapper.findAll('[role=option]').map((o) => o.text())).toEqual(['Gamma'])
+    await wrapper.get('[role=option]').trigger('click')
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['c'])
+    wrapper.unmount()
+  })
+
+  it('chooses the active row with the arrow keys and Enter', async () => {
+    const wrapper = mountSelect()
+    await wrapper.get('button').trigger('click')
+    await wrapper.get('input').trigger('keydown', { key: 'ArrowDown' })
+    await wrapper.get('input').trigger('keydown', { key: 'Enter' })
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['b'])
+    wrapper.unmount()
+  })
+
+  it('says so when nothing matches, and closes on Escape', async () => {
+    const wrapper = mountSelect()
+    await wrapper.get('button').trigger('click')
+    await wrapper.get('input').setValue('zzz')
+    expect(wrapper.text()).toContain('No matches')
+    await wrapper.get('input').trigger('keydown', { key: 'Escape' })
+    expect(wrapper.get('button').attributes('aria-expanded')).toBe('false')
+    wrapper.unmount()
+  })
+
+  it('marks the chosen option and does not open while disabled', async () => {
+    const disabled = mount(AvalonSelect, { props: { options, modelValue: 'a', label: 'Network', disabled: true } })
+    expect(disabled.get('button').attributes('disabled')).toBeDefined()
+    const open = mountSelect('a')
+    await open.get('button').trigger('click')
+    expect(open.get('[role=option][aria-selected=true]').text()).toBe('Alpha')
+    open.unmount()
   })
 })
 
