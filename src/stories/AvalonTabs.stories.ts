@@ -8,6 +8,7 @@ const meta: Meta<typeof AvalonTabs> = {
   args: {
     label: 'Tools',
     keepAlive: true,
+    size: 'md',
     tabs: [
       { id: 'probe', label: 'Probe' },
       { id: 'alerts', label: 'Alerts', badge: '3' },
@@ -41,3 +42,5 @@ export const ManyTabs: Story = {
     })),
   },
 }
+
+export const Large: Story = { render, args: { size: 'lg' } }

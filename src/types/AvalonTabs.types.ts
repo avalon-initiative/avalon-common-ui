@@ -12,4 +12,6 @@ export interface AvalonTabsProps {
   label?: string
   // Keep every panel mounted (hidden with v-show) so state inside survives; false renders only the active one.
   keepAlive?: boolean
+  // 'lg' raises the label size and padding for a primary navigation strip.
+  size?: 'md' | 'lg'
 }
