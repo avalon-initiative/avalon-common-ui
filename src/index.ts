@@ -20,6 +20,7 @@ export { default as AvalonEditableField } from './components/AvalonEditableField
 export { default as AvalonGuildCard } from './components/AvalonGuildCard.vue'
 export { default as AvalonGuildMemberRow } from './components/AvalonGuildMemberRow.vue'
 export { default as AvalonMultiSelect } from './components/AvalonMultiSelect.vue'
+export { default as AvalonSelect } from './components/AvalonSelect.vue'
 export { default as AvalonChip } from './components/AvalonChip.vue'
 export { default as AvalonChipList } from './components/AvalonChipList.vue'
 export { default as AvalonRoleBadge } from './components/AvalonRoleBadge.vue'
@@ -79,6 +80,7 @@ export type {
   AvalonMultiSelectOption,
   AvalonMultiSelectProps,
 } from './types/AvalonMultiSelect.types'
+export type { AvalonSelectOption, AvalonSelectProps } from './types/AvalonSelect.types'
 export type { AvalonChipProps } from './types/AvalonChip.types'
 export type { AvalonChipListItem, AvalonChipListProps } from './types/AvalonChipList.types'
 export type { AvalonToggleSwitchProps } from './types/AvalonToggleSwitch.types'
